@@ -1,7 +1,7 @@
 // -*- mode:c++; tab-width:2; indent-tabs-mode:nil; c-basic-offset:2 -*-
 
 #ifndef __CHECKSUM_EXCEPTION_H__
-#define __NOT_FOUND_EXCEPTION_H__
+#define __CHECKSUM_EXCEPTION_H__
 
 /*
  * Copyright 20011 ZXing authors
