@@ -221,6 +221,7 @@ void DecodedBitStreamParser::decodeNumericSegment(Ref<BitSource> bits, std::stri
   while (count >= 3) {
     // Each 10 bits encodes three digits
     if (bits->available() < 10) {
+      delete[] bytes;
       throw ReaderException("format exception");
     }
     int threeDigitsBits = bits->readBits(10);
@@ -237,6 +238,7 @@ void DecodedBitStreamParser::decodeNumericSegment(Ref<BitSource> bits, std::stri
   }
   if (count == 2) {
     if (bits->available() < 7) {
+      delete[] bytes;
       throw ReaderException("format exception");
     }
     // Two digits left over to read, encoded in 7 bits
@@ -251,6 +253,7 @@ void DecodedBitStreamParser::decodeNumericSegment(Ref<BitSource> bits, std::stri
     bytes[i++] = ALPHANUMERIC_CHARS[twoDigitsBits % 10];
   } else if (count == 1) {
     if (bits->available() < 4) {
+      delete[] bytes;
       throw ReaderException("format exception");
     }
     // One digit left over to read
