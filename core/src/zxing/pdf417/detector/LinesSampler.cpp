@@ -20,6 +20,7 @@
 #include <zxing/pdf417/decoder/BitMatrixParser.h>
 #include <zxing/NotFoundException.h>
 #include <zxing/common/Point.h>
+#include <algorithm>  // vs12, std::min und std:max
 
 using std::map;
 using std::vector;
