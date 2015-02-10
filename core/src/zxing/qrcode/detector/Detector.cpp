@@ -30,6 +30,7 @@
 #include <zxing/common/detector/MathUtils.h>
 #include <sstream>
 #include <cstdlib>
+#include <algorithm>  // vs12, std::min und std:max
 
 using std::ostringstream;
 using std::abs;

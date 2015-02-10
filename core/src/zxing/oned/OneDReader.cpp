@@ -22,6 +22,7 @@
 #include <zxing/NotFoundException.h>
 #include <math.h>
 #include <limits.h>
+#include <algorithm>  // vs12, std::min und std:max
 
 using std::vector;
 using zxing::Ref;

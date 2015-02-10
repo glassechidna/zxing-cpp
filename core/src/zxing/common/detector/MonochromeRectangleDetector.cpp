@@ -22,6 +22,7 @@
 #include <zxing/NotFoundException.h>
 #include <zxing/common/detector/MonochromeRectangleDetector.h>
 #include <sstream>
+#include <algorithm>  // vs12, std::min und std:max
 
 using std::vector;
 using zxing::Ref;

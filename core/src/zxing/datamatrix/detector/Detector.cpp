@@ -27,6 +27,7 @@
 #include <zxing/NotFoundException.h>
 #include <sstream>
 #include <cstdlib>
+#include <algorithm>  // vs12, std::min und std:max
 
 using std::abs;
 using zxing::Ref;

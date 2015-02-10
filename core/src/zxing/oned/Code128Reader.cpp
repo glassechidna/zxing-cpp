@@ -26,6 +26,7 @@
 #include <math.h>
 #include <string.h>
 #include <sstream>
+#include <algorithm>  // vs12, std::min und std:max
 
 using std::vector;
 using std::string;
