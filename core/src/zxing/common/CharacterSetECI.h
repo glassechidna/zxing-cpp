@@ -27,8 +27,8 @@ namespace common {
 
 class CharacterSetECI : public Counted {
 private:
-  static std::map<int, zxing::Ref<CharacterSetECI>> VALUE_TO_ECI;
-  static std::map<std::string, zxing::Ref<CharacterSetECI>> NAME_TO_ECI;
+  static std::map<int, zxing::Ref<CharacterSetECI> > VALUE_TO_ECI;
+  static std::map<std::string, zxing::Ref<CharacterSetECI> > NAME_TO_ECI;
   static const bool inited;
   static bool init_tables();
 
