@@ -1,4 +1,4 @@
-// -*- mode:c++; tab-width:2; indent-tabs-mode:nil; c-basic-offset:2 -*-
+﻿// -*- mode:c++; tab-width:2; indent-tabs-mode:nil; c-basic-offset:2 -*-
 /*
  * Copyright 2010, 2012 ZXing authors All rights reserved.
  *
@@ -21,11 +21,12 @@
 #include <zxing/NotFoundException.h>
 #include <zxing/common/Point.h>
 #include <algorithm>  // vs12, std::min und std:max
+#include <cmath>
 
 using std::map;
 using std::vector;
 using std::min;
-using std::abs;
+//using std::abs;
 using zxing::pdf417::detector::LinesSampler;
 using zxing::pdf417::decoder::BitMatrixParser;
 using zxing::Ref;
@@ -62,7 +63,7 @@ class VoteResult {
     this->vote = vote;
   }
 };
-  
+
 VoteResult getValueWithMaxVotes(map<int, int>& votes) {
   VoteResult result;
   int maxVotes = 0;
