@@ -75,6 +75,7 @@ Ref<LuminanceSource> ImageReaderSource::create(string const& filename) {
     char *buffer = reinterpret_cast<char*>(jpgd::decompress_jpeg_image_from_file(
         filename.c_str(), &width, &height, &comps, 4));
     image = zxing::ArrayRef<char>(buffer, 4 * width * height);
+    free(buffer);
   }
   if (!image) {
     ostringstream msg;
