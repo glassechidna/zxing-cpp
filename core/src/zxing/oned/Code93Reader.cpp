@@ -239,16 +239,26 @@ Ref<String> Code93Reader::decodeExtended(string const& encoded)  {
           throw FormatException::getFormatInstance();
         }
         break;
-      case 'b':
-        // %A to %E map to control codes ESC to US
-        if (next >= 'A' && next <= 'E') {
-          decodedChar = (char) (next - 38);
-        } else if (next >= 'F' && next <= 'W') {
-          decodedChar = (char) (next - 11);
-        } else {
-          throw FormatException::getFormatInstance();
-        }
-        break;
+	  case 'b':
+		if (next >= 'A' && next <= 'E') {
+		  // %A to %E map to control codes ESC to USep
+		  decodedChar = (char) (next - 38);
+		} else if (next >= 'F' && next <= 'J') {
+		  // %F to %J map to ; < = > ?
+		  decodedChar = (char) (next - 11);
+		} else if (next >= 'K' && next <= 'O') {
+		  // %K to %O map to [ \ ] ^ _
+		  decodedChar = (char) (next + 16);
+		} else if (next >= 'P' && next <= 'S') {
+		  // %P to %S map to { | } ~
+		  decodedChar = (char) (next + 43);
+		} else if (next >= 'T' && next <= 'Z') {
+		  // %T to %Z all map to DEL (127)
+		  decodedChar = 127;
+		} else {
+		  throw FormatException::getFormatInstance();
+		}
+		break;
       case 'c':
         // /A to /O map to ! to , and /Z maps to :
         if (next >= 'A' && next <= 'O') {
