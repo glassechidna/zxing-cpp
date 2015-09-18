@@ -26,7 +26,8 @@ Usage with CLion or Qt Creator:
 
 Usage with Makefiles, Visual Studio, etc. (see `cmake --help` for a complete list of generators):
 
-  1. `cd` to `cpp/build`
+  1. `mkdir build`
+  2. `cd` to `build`
   3. Unix: run `cmake -G "Unix Makefiles" ..`
   3. Windows: run `cmake -G "Visual Studio 10" ..`
   
@@ -42,9 +43,3 @@ To profile the code (very useful to optimize the code):
   1. Install Valgrind
   2. Run `valgrind --tool=callgrind build/zxing - path/to/test/data/*.jpg > report.html`
   3. Analyze output using KCachegrind
-
-To run the black box tests and check for changes:
-
-  1. Build `zxing-img`, e.g., scons zxing
-  2. Run the tests: `bash blackboxtest.sh 2>&1 | tee bb.results`
-  3. Diff them with the known results: `diff bb.results blackboxtest.results`

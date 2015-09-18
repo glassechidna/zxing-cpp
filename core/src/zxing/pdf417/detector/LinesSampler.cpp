@@ -21,11 +21,11 @@
 #include <zxing/NotFoundException.h>
 #include <zxing/common/Point.h>
 #include <algorithm>  // vs12, std::min und std:max
+#include <cmath>
 
 using std::map;
 using std::vector;
 using std::min;
-using std::abs;
 using zxing::pdf417::detector::LinesSampler;
 using zxing::pdf417::decoder::BitMatrixParser;
 using zxing::Ref;
@@ -62,7 +62,7 @@ class VoteResult {
     this->vote = vote;
   }
 };
-  
+
 VoteResult getValueWithMaxVotes(map<int, int>& votes) {
   VoteResult result;
   int maxVotes = 0;
