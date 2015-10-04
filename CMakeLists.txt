@@ -70,7 +70,8 @@ add_executable(zxing ${ZXING_FILES})
 target_link_libraries(zxing libzxing)
 install(TARGETS zxing libzxing
 	LIBRARY DESTINATION lib
-	RUNTIME DESTINATION bin)
+	RUNTIME DESTINATION bin
+	ARCHIVE DESTINATION lib)
 install(DIRECTORY core/src/zxing/ DESTINATION include/zxing FILES_MATCHING PATTERN "*.h")
 
 # Add testrunner executable.
