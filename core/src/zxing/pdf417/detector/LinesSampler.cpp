@@ -704,7 +704,7 @@ Point LinesSampler::intersection(Line a, Line b) {
   float p = a.start.x * a.end.y - a.start.y * a.end.x;
   float q = b.start.x * b.end.y - b.start.y * b.end.x;
   float denom = dxa * dyb - dya * dxb;
-  if(abs(denom) < 1e-12)  // Lines don't intersect (replaces "denom == 0")
+  if(std::abs(denom) < 1e-12)  // Lines don't intersect (replaces "denom == 0")
     return Point(std::numeric_limits<float>::infinity(),
                  std::numeric_limits<float>::infinity());
 
