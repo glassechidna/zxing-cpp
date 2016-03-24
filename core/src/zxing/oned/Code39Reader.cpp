@@ -133,7 +133,7 @@ Ref<Result> Code39Reader::decodeRow(int rowNumber, Ref<BitArray> row) {
   int whiteSpaceAfterEnd = nextStart - lastStart - lastPatternSize;
   // If 50% of last pattern size, following last pattern, is not whitespace,
   // fail (but if it's whitespace to the very end of the image, that's OK)
-  if (nextStart != end && (whiteSpaceAfterEnd >> 1) < lastPatternSize) {
+  if (nextStart != end && (whiteSpaceAfterEnd << 1) < lastPatternSize) {
     throw NotFoundException();
   }
 
