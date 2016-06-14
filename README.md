@@ -36,6 +36,10 @@ You can switch between build modes by specifying:
   - `-DCMAKE_BUILD_TYPE=Debug` or
   - `-DCMAKE_BUILD_TYPE=Release`
 
+# OpenCV integration
+
+When build on a system where opencv is installed the open cv bridge classes and executable will be built too.
+
 # Development tips
 
 To profile the code (very useful to optimize the code):
