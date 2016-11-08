@@ -31,8 +31,8 @@ class UPCEANReader : public OneDReader {
   // UPCEANExtensionSupport extensionReader;
   // EANManufacturerOrgSupport eanManSupport;
 
-  static const int MAX_AVG_VARIANCE;
-  static const int MAX_INDIVIDUAL_VARIANCE;
+  static const float MAX_AVG_VARIANCE;
+  static const float MAX_INDIVIDUAL_VARIANCE;
 
   static Range findStartGuardPattern(Ref<BitArray> row);
 

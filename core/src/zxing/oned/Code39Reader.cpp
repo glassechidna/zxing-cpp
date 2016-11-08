@@ -23,7 +23,7 @@
 #include <zxing/ChecksumException.h>
 #include <math.h>
 #include <limits.h>
-#include <algorithm>  // vs12, std::min und std:max
+#include <algorithm>
 
 using std::vector;
 using zxing::Ref;
@@ -38,7 +38,9 @@ using zxing::BitArray;
 
 namespace {
   const char* ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. *$/+%";
-
+  // Note this lacks '*' compared to ALPHABET_STRING
+  const char* CHECK_DIGIT_STRING = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%";
+  
   /**
    * These represent the encodings of characters, as patterns of wide and narrow
    * bars.
@@ -59,6 +61,7 @@ namespace {
     "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. *$/+%";
 
   std::string alphabet_string (ALPHABET_STRING);
+  std::string checkdigit_string (CHECK_DIGIT_STRING);
 }
 
 void Code39Reader::init(bool usingCheckDigit_, bool extendedMode_) {
@@ -133,7 +136,7 @@ Ref<Result> Code39Reader::decodeRow(int rowNumber, Ref<BitArray> row) {
   int whiteSpaceAfterEnd = nextStart - lastStart - lastPatternSize;
   // If 50% of last pattern size, following last pattern, is not whitespace,
   // fail (but if it's whitespace to the very end of the image, that's OK)
-  if (nextStart != end && (whiteSpaceAfterEnd << 1) < lastPatternSize) {
+  if (nextStart != end && (whiteSpaceAfterEnd * 2) < lastPatternSize) {
     throw NotFoundException();
   }
 
@@ -141,9 +144,9 @@ Ref<Result> Code39Reader::decodeRow(int rowNumber, Ref<BitArray> row) {
     int max = result.length() - 1;
     int total = 0;
     for (int i = 0; i < max; i++) {
-      total += alphabet_string.find_first_of(decodeRowResult[i], 0);
+      total += checkdigit_string.find_first_of(decodeRowResult[i], 0);
     }
-    if (result[max] != ALPHABET[total % 43]) {
+    if (result[max] != CHECK_DIGIT_STRING[total % 43]) {
       throw ChecksumException();
     }
     result.resize(max);
@@ -192,7 +195,7 @@ vector<int> Code39Reader::findAsteriskPattern(Ref<BitArray> row, vector<int>& co
         // Look for whitespace before start pattern, >= 50% of width of
         // start pattern.
         if (toNarrowWidePattern(counters) == ASTERISK_ENCODING &&
-            row->isRange(std::max(0, patternStart - ((i - patternStart) >> 1)), patternStart, false)) {
+            row->isRange(std::max(0, patternStart - ((i - patternStart) / 2)), patternStart, false)) {
           vector<int> resultValue (2, 0);
           resultValue[0] = patternStart;
           resultValue[1] = i;
@@ -251,7 +254,7 @@ int Code39Reader::toNarrowWidePattern(vector<int>& counters){
           wideCounters--;
           // totalWideCountersWidth = 3 * average, so this checks if
           // counter >= 3/2 * average.
-          if ((counter << 1) >= totalWideCountersWidth) {
+          if ((counter * 2) >= totalWideCountersWidth) {
             return -1;
           }
         }
@@ -265,7 +268,7 @@ int Code39Reader::toNarrowWidePattern(vector<int>& counters){
 char Code39Reader::patternToChar(int pattern){
   for (int i = 0; i < CHARACTER_ENCODINGS_LEN; i++) {
     if (CHARACTER_ENCODINGS[i] == pattern) {
-      return ALPHABET[i];
+      return ALPHABET_STRING[i];
     }
   }
   throw ReaderException("");

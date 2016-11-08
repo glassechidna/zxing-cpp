@@ -27,7 +27,7 @@
 #include <zxing/NotFoundException.h>
 #include <sstream>
 #include <cstdlib>
-#include <algorithm>  // vs12, std::min und std:max
+#include <algorithm>
 
 using std::abs;
 using zxing::Ref;
@@ -369,7 +369,7 @@ Ref<ResultPointsAndTransitions> Detector::transitionsBetween(Ref<ResultPoint> fr
 
   int dx = abs(toX - fromX);
   int dy = abs(toY - fromY);
-  int error = -dx >> 1;
+  int error = -dx / 2;
   int ystep = fromY < toY ? 1 : -1;
   int xstep = fromX < toX ? 1 : -1;
   int transitions = 0;
