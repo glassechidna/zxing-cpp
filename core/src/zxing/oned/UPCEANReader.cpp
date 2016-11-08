@@ -101,8 +101,8 @@ namespace {
   const int L_AND_G_PATTERNS_LEN = LEN(L_AND_G_PATTERNS_);
 }
 
-const int UPCEANReader::MAX_AVG_VARIANCE = (int)(PATTERN_MATCH_RESULT_SCALE_FACTOR * 0.48f);
-const int UPCEANReader::MAX_INDIVIDUAL_VARIANCE = (int)(PATTERN_MATCH_RESULT_SCALE_FACTOR * 0.7f);
+const float UPCEANReader::MAX_AVG_VARIANCE = 0.48f;
+const float UPCEANReader::MAX_INDIVIDUAL_VARIANCE = 0.7f;
 
 #define VECTOR_INIT(v) v, v + sizeof(v)/sizeof(v[0])
 
@@ -247,12 +247,12 @@ int UPCEANReader::decodeDigit(Ref<BitArray> row,
                               int rowOffset,
                               vector<int const*> const& patterns) {
   recordPattern(row, rowOffset, counters);
-  int bestVariance = MAX_AVG_VARIANCE; // worst variance we'll accept
+  float bestVariance = MAX_AVG_VARIANCE; // worst variance we'll accept
   int bestMatch = -1;
   int max = patterns.size();
   for (int i = 0; i < max; i++) {
     int const* pattern (patterns[i]);
-    int variance = patternMatchVariance(counters, pattern, MAX_INDIVIDUAL_VARIANCE);
+    float variance = patternMatchVariance(counters, pattern, MAX_INDIVIDUAL_VARIANCE);
     if (variance < bestVariance) {
       bestVariance = variance;
       bestMatch = i;

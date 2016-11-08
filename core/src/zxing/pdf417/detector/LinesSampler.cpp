@@ -20,12 +20,12 @@
 #include <zxing/pdf417/decoder/BitMatrixParser.h>
 #include <zxing/NotFoundException.h>
 #include <zxing/common/Point.h>
-#include <algorithm>  // vs12, std::min und std:max
-#include <cmath>
+#include <algorithm>
 
 using std::map;
 using std::vector;
 using std::min;
+using std::abs;
 using zxing::pdf417::detector::LinesSampler;
 using zxing::pdf417::decoder::BitMatrixParser;
 using zxing::Ref;
@@ -36,10 +36,12 @@ using zxing::Point;
 // VC++
 using zxing::Line;
 
+#if 0
 const int LinesSampler::MODULES_IN_SYMBOL;
 const int LinesSampler::BARS_IN_SYMBOL;
 const int LinesSampler::POSSIBLE_SYMBOLS;
 const int LinesSampler::BARCODE_START_OFFSET;
+#endif
 
 namespace {
 
@@ -62,7 +64,7 @@ class VoteResult {
     this->vote = vote;
   }
 };
-
+  
 VoteResult getValueWithMaxVotes(map<int, int>& votes) {
   VoteResult result;
   int maxVotes = 0;
@@ -704,7 +706,7 @@ Point LinesSampler::intersection(Line a, Line b) {
   float p = a.start.x * a.end.y - a.start.y * a.end.x;
   float q = b.start.x * b.end.y - b.start.y * b.end.x;
   float denom = dxa * dyb - dya * dxb;
-  if(std::abs(denom) < 1e-12)  // Lines don't intersect (replaces "denom == 0")
+  if(abs(denom) < 1e-12)  // Lines don't intersect (replaces "denom == 0")
     return Point(std::numeric_limits<float>::infinity(),
                  std::numeric_limits<float>::infinity());
 

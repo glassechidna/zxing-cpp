@@ -106,38 +106,43 @@ bool UPCEReader::determineNumSysAndCheckDigit(std::string& resultString, int lgP
  * @param upce UPC-E code as string of digits
  * @return equivalent UPC-A code as string of digits
  */
-Ref<String> UPCEReader::convertUPCEtoUPCA(Ref<String> const& upce_) {
+Ref<String> UPCEReader::convertUPCEtoUPCA(Ref<String> const& upce_) 
+{
   string const& upce(upce_->getText());
-  string result;
-  result.append(1, upce[0]);
-  char lastChar = upce[6];
-  switch (lastChar) {
-  case '0':
-  case '1':
-  case '2':
-    result.append(upce.substr(1,2));
-    result.append(1, lastChar);
-    result.append("0000");
-    result.append(upce.substr(3,3));
-    break;
-  case '3':
-    result.append(upce.substr(1,3));
-    result.append("00000");
-    result.append(upce.substr(4,2));
-    break;
-  case '4':
-    result.append(upce.substr(1,4));
-    result.append("00000");
-    result.append(1, upce[5]);
-    break;
-  default:
-    result.append(upce.substr(1,5));
-    result.append("0000");
-    result.append(1, lastChar);
-    break;
+  if (upce.size() == 8)
+  {
+    string result;
+    result.append(1, upce[0]);
+    char lastChar = upce[6];
+    switch (lastChar) {
+    case '0':
+    case '1':
+    case '2':
+      result.append(upce.substr(1,2));
+      result.append(1, lastChar);
+      result.append("0000");
+      result.append(upce.substr(3,3));
+      break;
+    case '3':
+      result.append(upce.substr(1,3));
+      result.append("00000");
+      result.append(upce.substr(4,2));
+      break;
+    case '4':
+      result.append(upce.substr(1,4));
+      result.append("00000");
+      result.append(1, upce[5]);
+      break;
+    default:
+      result.append(upce.substr(1,5));
+      result.append("0000");
+      result.append(1, lastChar);
+      break;
+    }
+    result.append(1, upce[7]);
+    return Ref<String>(new String(result));
   }
-  result.append(1, upce[7]);
-  return Ref<String>(new String(result));
+  return upce_;
 }
 
 

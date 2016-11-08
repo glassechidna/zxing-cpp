@@ -27,7 +27,7 @@ namespace pdf417 {
 namespace detector {
 
 class LinesSampler {
-private:
+protected:
   static const int MODULES_IN_SYMBOL = 17;
   static const int BARS_IN_SYMBOL = 8;
   static const int POSSIBLE_SYMBOLS = 2787;

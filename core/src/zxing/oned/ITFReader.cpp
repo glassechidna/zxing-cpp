@@ -36,6 +36,9 @@ using zxing::oned::ITFReader;
 // VC++
 using zxing::BitArray;
 
+const float ITFReader::MAX_AVG_VARIANCE = 0.38f;
+const float ITFReader::MAX_INDIVIDUAL_VARIANCE = 0.78f;
+
 #define VECTOR_INIT(v) v, v + sizeof(v)/sizeof(v[0])
 
 namespace {
@@ -145,7 +148,7 @@ void ITFReader::decodeMiddle(Ref<BitArray> row,
     recordPattern(row, payloadStart, counterDigitPair);
     // Split them into each array
     for (int k = 0; k < 5; k++) {
-      int twoK = k << 1;
+      int twoK = 2 * k;
       counterBlack[k] = counterDigitPair[twoK];
       counterWhite[k] = counterDigitPair[twoK + 1];
     }
@@ -176,7 +179,7 @@ ITFReader::Range ITFReader::decodeStart(Ref<BitArray> row) {
   // Determine the width of a narrow line in pixels. We can do this by
   // getting the width of the start pattern and dividing by 4 because its
   // made up of 4 narrow lines.
-  narrowLineWidth = (startPattern[1] - startPattern[0]) >> 2;
+  narrowLineWidth = (startPattern[1] - startPattern[0]) / 4;
 
   validateQuietZone(row, startPattern[0]);
   return startPattern;
@@ -316,12 +319,12 @@ ITFReader::Range ITFReader::findGuardPattern(Ref<BitArray> row,
  */
 int ITFReader::decodeDigit(vector<int>& counters){
 
-  int bestVariance = MAX_AVG_VARIANCE; // worst variance we'll accept
+  float bestVariance = MAX_AVG_VARIANCE; // worst variance we'll accept
   int bestMatch = -1;
   int max = sizeof(PATTERNS)/sizeof(PATTERNS[0]);
   for (int i = 0; i < max; i++) {
     int const* pattern = PATTERNS[i];
-    int variance = patternMatchVariance(counters, pattern, MAX_INDIVIDUAL_VARIANCE);
+    float variance = patternMatchVariance(counters, pattern, MAX_INDIVIDUAL_VARIANCE);
     if (variance < bestVariance) {
       bestVariance = variance;
       bestMatch = i;

@@ -22,7 +22,7 @@
 #include <zxing/NotFoundException.h>
 #include <math.h>
 #include <limits.h>
-#include <algorithm>  // vs12, std::min und std:max
+#include <algorithm>
 
 using std::vector;
 using zxing::Ref;
@@ -72,7 +72,7 @@ Ref<Result> OneDReader::doDecode(Ref<BinaryBitmap> image, DecodeHints hints) {
   int height = image->getHeight();
   Ref<BitArray> row(new BitArray(width));
 
-  int middle = height >> 1;
+  int middle = height / 2;
   bool tryHarder = hints.getTryHarder();
   int rowStep = std::max(1, height >> (tryHarder ? 8 : 5));
   using namespace std;
@@ -87,7 +87,7 @@ Ref<Result> OneDReader::doDecode(Ref<BinaryBitmap> image, DecodeHints hints) {
   for (int x = 0; x < maxLines; x++) {
 
     // Scanning from the middle out. Determine which row we're looking at next:
-    int rowStepsAboveOrBelow = (x + 1) >> 1;
+    int rowStepsAboveOrBelow = (x + 1) / 2;
     bool isAbove = (x & 0x01) == 0; // i.e. is x even?
     int rowNumber = middle + rowStep * (isAbove ? rowStepsAboveOrBelow : -rowStepsAboveOrBelow);
     if (false) {
@@ -150,15 +150,15 @@ Ref<Result> OneDReader::doDecode(Ref<BinaryBitmap> image, DecodeHints hints) {
   throw NotFoundException();
 }
 
-int OneDReader::patternMatchVariance(vector<int>& counters,
-                                     vector<int> const& pattern,
-                                     int maxIndividualVariance) {
+float OneDReader::patternMatchVariance(vector<int>& counters,
+                                       vector<int> const& pattern,
+                                       float maxIndividualVariance) {
   return patternMatchVariance(counters, &pattern[0], maxIndividualVariance);
 }
 
-int OneDReader::patternMatchVariance(vector<int>& counters,
+float OneDReader::patternMatchVariance(vector<int>& counters,
                                      int const pattern[],
-                                     int maxIndividualVariance) {
+                                     float maxIndividualVariance) {
   int numCounters = counters.size();
   unsigned int total = 0;
   unsigned int patternLength = 0;
@@ -169,21 +169,19 @@ int OneDReader::patternMatchVariance(vector<int>& counters,
   if (total < patternLength) {
     // If we don't even have one pixel per unit of bar width, assume this is too small
     // to reliably match, so fail:
-    return INT_MAX;
+    return FLT_MAX;
   }
-  // We're going to fake floating-point math in integers. We just need to use more bits.
-  // Scale up patternLength so that intermediate values below like scaledCounter will have
-  // more "significant digits"
-  int unitBarWidth = (total << INTEGER_MATH_SHIFT) / patternLength;
-  maxIndividualVariance = (maxIndividualVariance * unitBarWidth) >> INTEGER_MATH_SHIFT;
-
-  int totalVariance = 0;
+  
+  float unitBarWidth = (float) total / patternLength;
+  maxIndividualVariance *= unitBarWidth;
+  
+  float totalVariance = 0.0f;
   for (int x = 0; x < numCounters; x++) {
-    int counter = counters[x] << INTEGER_MATH_SHIFT;
-    int scaledPattern = pattern[x] * unitBarWidth;
-    int variance = counter > scaledPattern ? counter - scaledPattern : scaledPattern - counter;
+    int counter = counters[x];
+    float scaledPattern = pattern[x] * unitBarWidth;
+    float variance = counter > scaledPattern ? counter - scaledPattern : scaledPattern - counter;
     if (variance > maxIndividualVariance) {
-      return INT_MAX;
+      return FLT_MAX;
     }
     totalVariance += variance;
   }

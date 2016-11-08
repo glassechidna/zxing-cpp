@@ -183,20 +183,16 @@ int Code93Reader::toPattern(vector<int>& counters) {
   }
   int pattern = 0;
   for (int i = 0; i < max; i++) {
-    int scaledShifted = (counters[i] << INTEGER_MATH_SHIFT) * 9 / sum;
-    int scaledUnshifted = scaledShifted >> INTEGER_MATH_SHIFT;
-    if ((scaledShifted & 0xFF) > 0x7F) {
-      scaledUnshifted++;
-    }
-    if (scaledUnshifted < 1 || scaledUnshifted > 4) {
+    int scaled = int(counters[i] * 9.0f / sum);
+      if (scaled < 1 || scaled > 4) {
       return -1;
     }
     if ((i & 0x01) == 0) {
-      for (int j = 0; j < scaledUnshifted; j++) {
+      for (int j = 0; j < scaled; j++) {
         pattern = (pattern << 1) | 0x01;
       }
     } else {
-      pattern <<= scaledUnshifted;
+      pattern <<= scaled;
     }
   }
   return pattern;
@@ -239,26 +235,26 @@ Ref<String> Code93Reader::decodeExtended(string const& encoded)  {
           throw FormatException::getFormatInstance();
         }
         break;
-	  case 'b':
-		if (next >= 'A' && next <= 'E') {
-		  // %A to %E map to control codes ESC to USep
-		  decodedChar = (char) (next - 38);
-		} else if (next >= 'F' && next <= 'J') {
-		  // %F to %J map to ; < = > ?
-		  decodedChar = (char) (next - 11);
-		} else if (next >= 'K' && next <= 'O') {
-		  // %K to %O map to [ \ ] ^ _
-		  decodedChar = (char) (next + 16);
-		} else if (next >= 'P' && next <= 'S') {
-		  // %P to %S map to { | } ~
-		  decodedChar = (char) (next + 43);
-		} else if (next >= 'T' && next <= 'Z') {
-		  // %T to %Z all map to DEL (127)
-		  decodedChar = 127;
-		} else {
-		  throw FormatException::getFormatInstance();
-		}
-		break;
+      case 'b':
+          // %A to %E map to control codes ESC to US
+        if (next >= 'A' && next <= 'E') {
+          decodedChar = (char) (next - 38);
+        } else if (next >= 'F' && next <= 'J') {
+          // %F to %J map to ; < = > ?
+          decodedChar = (char) (next - 11);
+        } else if (next >= 'K' && next <= 'O') {
+          // %K to %O map to [ \ ] ^ _
+          decodedChar = (char) (next + 16);
+        } else if (next >= 'P' && next <= 'S') {
+          // %P to %S map to { | } ~
+          decodedChar = (char) (next + 43);
+        } else if (next >= 'T' && next <= 'Z') {
+          // %T to %Z all map to DEL (127)
+          decodedChar = 127;
+        } else {
+          throw FormatException::getFormatInstance();
+        }
+        break;
       case 'c':
         // /A to /O map to ! to , and /Z maps to :
         if (next >= 'A' && next <= 'O') {
