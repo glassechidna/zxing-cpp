@@ -109,39 +109,36 @@ public:
 
 /**
  * 101: mask bits for which xy mod 2 + xy mod 3 == 0
+ * equivalently, such that xy mod 6 == 0
  */
 class DataMask101 : public DataMask {
 public:
   bool isMasked(size_t x, size_t y) {
-    size_t temp = x * y;
-    //		return (temp & 0x01) + (temp % 3) == 0;
-    return (temp % 2) + (temp % 3) == 0;
-
+    return ((x * y) % 6) == 0;
   }
 };
-
+      
 /**
  * 110: mask bits for which (xy mod 2 + xy mod 3) mod 2 == 0
+ * equivalently, such that xy mod 6 < 3
  */
 class DataMask110 : public DataMask {
 public:
   bool isMasked(size_t x, size_t y) {
-    size_t temp = x * y;
-    //		return (((temp & 0x01) + (temp % 3)) & 0x01) == 0;
-    return (((temp % 2) + (temp % 3)) % 2) == 0;
+    return ((x * y) % 6) < 3;
   }
 };
-
 /**
  * 111: mask bits for which ((x+y)mod 2 + xy mod 3) mod 2 == 0
+ * equivalently, such that (x + y + xy mod 3) mod 2 == 0
  */
 class DataMask111 : public DataMask {
 public:
   bool isMasked(size_t x, size_t y) {
-    //		return ((((x + y) & 0x01) + ((x * y) % 3)) & 0x01) == 0;
-    return ((((x + y) % 2) + ((x * y) % 3)) % 2) == 0;
+    return ((x + y + ((x * y) % 3)) & 0x01) == 0;
   }
 };
+
 
 int DataMask::buildDataMasks() {
   DATA_MASKS.push_back(Ref<DataMask> (new DataMask000()));
