@@ -184,7 +184,7 @@ int Code93Reader::toPattern(vector<int>& counters) {
   int pattern = 0;
   for (int i = 0; i < max; i++) {
     int scaled = int(counters[i] * 9.0f / sum);
-      if (scaled < 1 || scaled > 4) {
+    if (scaled < 1 || scaled > 4) {
       return -1;
     }
     if ((i & 0x01) == 0) {
@@ -236,7 +236,7 @@ Ref<String> Code93Reader::decodeExtended(string const& encoded)  {
         }
         break;
       case 'b':
-          // %A to %E map to control codes ESC to US
+        // %A to %E map to control codes ESC to US
         if (next >= 'A' && next <= 'E') {
           decodedChar = (char) (next - 38);
         } else if (next >= 'F' && next <= 'J') {
