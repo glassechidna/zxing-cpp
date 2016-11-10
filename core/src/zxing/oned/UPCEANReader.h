@@ -39,7 +39,8 @@ class UPCEANReader : public OneDReader {
   virtual Range decodeEnd(Ref<BitArray> row, int endStart);
 
   static bool checkStandardUPCEANChecksum(Ref<String> const& s);
-
+  static int  getStandardUPCEANChecksum  (const std::string &s);
+ 
   static Range findGuardPattern(Ref<BitArray> row,
                                 int rowOffset,
                                 bool whiteFirst,
