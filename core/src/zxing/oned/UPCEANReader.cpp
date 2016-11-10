@@ -285,24 +285,29 @@ bool UPCEANReader::checkStandardUPCEANChecksum(Ref<String> const& s_) {
   if (length == 0) {
     return false;
   }
+  int check = (int)s[length - 1] - (int) '0';
+  return getStandardUPCEANChecksum(s.substr(0, length - 1)) == check;
+}
 
+int UPCEANReader::getStandardUPCEANChecksum(const std::string &s) {
+  int length = s.length();
   int sum = 0;
-  for (int i = length - 2; i >= 0; i -= 2) {
+  for (int i = length - 1; i >= 0; i -= 2) {
     int digit = (int) s[i] - (int) '0';
     if (digit < 0 || digit > 9) {
-      return false;
+      return -1;
     }
     sum += digit;
   }
   sum *= 3;
-  for (int i = length - 1; i >= 0; i -= 2) {
+  for (int i = length - 2; i >= 0; i -= 2) {
     int digit = (int) s[i] - (int) '0';
     if (digit < 0 || digit > 9) {
-      return false;
+      return -1;
     }
     sum += digit;
   }
-  return sum % 10 == 0;
+  return (1000 - sum) % 10;
 }
 
 UPCEANReader::~UPCEANReader() {

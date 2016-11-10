@@ -109,7 +109,7 @@ bool UPCEReader::determineNumSysAndCheckDigit(std::string& resultString, int lgP
 Ref<String> UPCEReader::convertUPCEtoUPCA(Ref<String> const& upce_) 
 {
   string const& upce(upce_->getText());
-  if (upce.size() == 8)
+  if (upce.size() >= 7)
   {
     string result;
     result.append(1, upce[0]);
@@ -139,7 +139,11 @@ Ref<String> UPCEReader::convertUPCEtoUPCA(Ref<String> const& upce_)
       result.append(1, lastChar);
       break;
     }
-    result.append(1, upce[7]);
+    
+    // Only append check digit in conversion if supplied
+    if (upce.size() >= 8)
+      result.append(1, upce[7]);
+    
     return Ref<String>(new String(result));
   }
   return upce_;
