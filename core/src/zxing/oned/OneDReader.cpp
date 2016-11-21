@@ -23,6 +23,7 @@
 #include <math.h>
 #include <limits.h>
 #include <algorithm>
+#include <cfloat>
 
 using std::vector;
 using zxing::Ref;
