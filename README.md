@@ -1,5 +1,7 @@
 # ZXing C++ Port
 
+[![Build Status](https://travis-ci.org/glassechidna/zxing-cpp.svg?branch=master)](https://travis-ci.org/glassechidna/zxing-cpp)
+
 [ZXing](https://github.com/zxing/zxing) is/was a Java library.
 
 At some point a complete C++ port/rewrite was created and maintained in the official [ZXing](https://github.com/zxing/zxing) repo. However, at the time of writing the C++ port is no longer maintained and has been removed from the official ZXing repo.
