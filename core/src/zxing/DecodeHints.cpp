@@ -29,7 +29,31 @@ using zxing::DecodeHints;
 // VC++
 using zxing::BarcodeFormat;
 
-const DecodeHintType DecodeHints::CHARACTER_SET;
+const DecodeHintType DecodeHints::AZTEC_HINT = 1 << BarcodeFormat::AZTEC;
+const DecodeHintType DecodeHints::CODABAR_HINT = 1 << BarcodeFormat::CODABAR;
+const DecodeHintType DecodeHints::CODE_39_HINT = 1 << BarcodeFormat::CODE_39;
+const DecodeHintType DecodeHints::CODE_93_HINT = 1 << BarcodeFormat::CODE_93;
+const DecodeHintType DecodeHints::CODE_128_HINT = 1 << BarcodeFormat::CODE_128;
+const DecodeHintType DecodeHints::DATA_MATRIX_HINT = 1 << BarcodeFormat::DATA_MATRIX;
+const DecodeHintType DecodeHints::EAN_8_HINT = 1 << BarcodeFormat::EAN_8;
+const DecodeHintType DecodeHints::EAN_13_HINT = 1 << BarcodeFormat::EAN_13;
+const DecodeHintType DecodeHints::ITF_HINT = 1 << BarcodeFormat::ITF;
+const DecodeHintType DecodeHints::MAXICODE_HINT = 1 << BarcodeFormat::MAXICODE;
+const DecodeHintType DecodeHints::PDF_417_HINT = 1 << BarcodeFormat::PDF_417;
+const DecodeHintType DecodeHints::QR_CODE_HINT = 1 << BarcodeFormat::QR_CODE;
+const DecodeHintType DecodeHints::RSS_14_HINT = 1 << BarcodeFormat::RSS_14;
+const DecodeHintType DecodeHints::RSS_EXPANDED_HINT = 1 << BarcodeFormat::RSS_EXPANDED;
+const DecodeHintType DecodeHints::UPC_A_HINT = 1 << BarcodeFormat::UPC_A;
+const DecodeHintType DecodeHints::UPC_E_HINT = 1 << BarcodeFormat::UPC_E;
+const DecodeHintType DecodeHints::UPC_EAN_EXTENSION_HINT = 1 << BarcodeFormat::UPC_EAN_EXTENSION;
+
+const DecodeHintType DecodeHints::TRYHARDER_HINT = 1 << 31;
+const DecodeHintType DecodeHints::CHARACTER_SET = 1 << 30;
+const DecodeHintType DecodeHints::ALLOWED_LENGTHS = 1 << 29;
+const DecodeHintType DecodeHints::ASSUME_CODE_39_CHECK_DIGIT = 1 << 28;
+const DecodeHintType DecodeHints::ASSUME_GS1 = 1 << 27;
+const DecodeHintType DecodeHints::NEED_RESULT_POINT_CALLBACK = 1 << 26;
+
 
 const DecodeHints DecodeHints::PRODUCT_HINT(
   UPC_A_HINT |
