@@ -1,9 +1,8 @@
-#
-# CMake listfile to specify the build process, see:
-# http://www.cmake.org/cmake/help/documentation.html
-#
+cmake_minimum_required(VERSION 3.0)
+
 project(zxing)
-cmake_minimum_required(VERSION 2.8.0)
+
+option(BUILD_TESTING "Enable generation of test targets" OFF)
 
 set(CMAKE_LIBRARY_PATH /opt/local/lib ${CMAKE_LIBRARY_PATH})
 
@@ -27,43 +26,35 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 endif()
 
 # Adjust CMake's module path.
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/FindModules)
 
 # Suppress MSVC CRT warnings.
 if(MSVC)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
     add_definitions(/Za)
+    add_definitions(/MP) # multi-core builds
 endif()
 
-# Add libzxing library.
-file(GLOB_RECURSE LIBZXING_FILES
-    "./core/src/*.cpp"
-    "./core/src/*.h"
-    "./core/src/*.cc"
-    "./core/src/*.hh"
-)
+include(source_files.cmake)
+
 if(WIN32)
-    file(GLOB LIBZXING_WIN32_FILES
-        "./core/lib/win32/*.c"
-        "./core/lib/win32/*.h"
-    )
-    set(LIBZXING_FILES ${LIBZXING_FILES} ${LIBZXING_WIN32_FILES})
-    include_directories(SYSTEM "./core/lib/win32/")
+    include_directories(core/lib/win32)
+    set(CMAKE_DEBUG_POSTFIX -debug)
 endif()
 
 # OpenCV classes
 find_package(OpenCV)
 if(OpenCV_FOUND)
-    file(GLOB_RECURSE LIBZXING_OPENCV_FILES
-        "./opencv/src/*.cpp"
-        "./opencv/src/*.h"
+    list(APPEND LIBZXING_FILES
+        opencv/src/zxing/MatSource.cpp
+        opencv/src/zxing/MatSource.h
     )
-    set(LIBZXING_FILES ${LIBZXING_FILES} ${LIBZXING_OPENCV_FILES})
+
     include_directories(${OpenCV_INCLUDE_DIRS})
-    include_directories("./opencv/src/")
+    include_directories(opencv/src)
 endif()
 
-include_directories("./core/src/")
+include_directories(core/src)
 add_library(libzxing ${LIBZXING_FILES})
 set_target_properties(libzxing PROPERTIES PREFIX "")
 
@@ -93,22 +84,35 @@ file(GLOB_RECURSE ZXING_FILES
 
 add_executable(zxing ${ZXING_FILES})
 target_link_libraries(zxing libzxing)
-install(TARGETS zxing libzxing
+
+install(TARGETS zxing libzxing EXPORT zxing-targets
 	LIBRARY DESTINATION lib
 	RUNTIME DESTINATION bin
-	ARCHIVE DESTINATION lib)
-install(DIRECTORY core/src/zxing/ DESTINATION include/zxing FILES_MATCHING PATTERN "*.h")
+	ARCHIVE DESTINATION lib
+    INCLUDES DESTINATION include
+)
 
-# Add testrunner executable.
-find_package(CPPUNIT)
-if(CPPUNIT_FOUND)
-    file(GLOB_RECURSE TESTRUNNER_FILES
-        "./core/tests/src/*.cpp"
-        "./core/tests/src/*.h"
-    )
-    add_executable(testrunner ${TESTRUNNER_FILES})
-    include_directories(${CPPUNIT_INCLUDE_DIR})
-    target_link_libraries(testrunner libzxing  ${CPPUNIT_LIBRARIES})
-else()
-    message(WARNING "Not building testrunner, because CppUnit is missing")
+install(EXPORT zxing-targets DESTINATION lib/zxing/cmake NAMESPACE zxing::)
+
+install(
+    DIRECTORY core/src/zxing/
+    DESTINATION include/zxing
+    FILES_MATCHING PATTERN "*.h"
+)
+
+configure_file(cmake/zxing-config.cmake.in zxing-config.cmake @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/zxing-config.cmake DESTINATION lib/zxing/cmake)
+
+if(BUILD_TESTING)
+    # Add testrunner executable.
+    find_package(CPPUNIT)
+    if(CPPUNIT_FOUND)
+        file(GLOB_RECURSE TESTRUNNER_FILES
+            "./core/tests/src/*.cpp"
+            "./core/tests/src/*.h"
+        )
+        add_executable(testrunner ${TESTRUNNER_FILES})
+        include_directories(${CPPUNIT_INCLUDE_DIR})
+        target_link_libraries(testrunner libzxing  ${CPPUNIT_LIBRARIES})
+    endif()
 endif()
