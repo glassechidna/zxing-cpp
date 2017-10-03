@@ -54,6 +54,7 @@ if(OpenCV_FOUND)
     include_directories(opencv/src)
 endif()
 
+
 include_directories(core/src)
 add_library(libzxing ${LIBZXING_FILES})
 set_target_properties(libzxing PROPERTIES PREFIX "")
@@ -66,53 +67,55 @@ else()
     add_definitions(-DNO_ICONV=1)
 endif()
 
-# Add OpenCV cli executable
-if(OpenCV_FOUND)
-    file(GLOB_RECURSE OPENCV_ZXING_FILES
-        "./opencv-cli/src/*.cpp"
-        "./opencv-cli/src/*.h"
-    )
-    add_executable(zxing-cv ${OPENCV_ZXING_FILES})
-    target_link_libraries(zxing-cv libzxing ${OpenCV_LIBRARIES})
-endif()
-
-# Add cli executable.
-file(GLOB_RECURSE ZXING_FILES
-    "./cli/src/*.cpp"
-    "./cli/src/*.h"
-)
-
-add_executable(zxing ${ZXING_FILES})
-target_link_libraries(zxing libzxing)
-
-install(TARGETS zxing libzxing EXPORT zxing-targets
-	LIBRARY DESTINATION lib
-	RUNTIME DESTINATION bin
-	ARCHIVE DESTINATION lib
-    INCLUDES DESTINATION include
-)
-
-install(EXPORT zxing-targets DESTINATION lib/zxing/cmake NAMESPACE zxing::)
-
-install(
-    DIRECTORY core/src/zxing/
-    DESTINATION include/zxing
-    FILES_MATCHING PATTERN "*.h"
-)
-
-configure_file(cmake/zxing-config.cmake.in zxing-config.cmake @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/zxing-config.cmake DESTINATION lib/zxing/cmake)
-
-if(BUILD_TESTING)
-    # Add testrunner executable.
-    find_package(CPPUNIT)
-    if(CPPUNIT_FOUND)
-        file(GLOB_RECURSE TESTRUNNER_FILES
-            "./core/tests/src/*.cpp"
-            "./core/tests/src/*.h"
+if(NOT ANDROID)
+    # Add OpenCV cli executable
+    if(OpenCV_FOUND)
+        file(GLOB_RECURSE OPENCV_ZXING_FILES
+            "./opencv-cli/src/*.cpp"
+            "./opencv-cli/src/*.h"
         )
-        add_executable(testrunner ${TESTRUNNER_FILES})
-        include_directories(${CPPUNIT_INCLUDE_DIR})
-        target_link_libraries(testrunner libzxing  ${CPPUNIT_LIBRARIES})
+        add_executable(zxing-cv ${OPENCV_ZXING_FILES})
+        target_link_libraries(zxing-cv libzxing ${OpenCV_LIBRARIES})
+    endif()
+
+    # Add cli executable.
+    file(GLOB_RECURSE ZXING_FILES
+        "./cli/src/*.cpp"
+        "./cli/src/*.h"
+    )
+
+    add_executable(zxing ${ZXING_FILES})
+    target_link_libraries(zxing libzxing)
+
+    install(TARGETS zxing libzxing EXPORT zxing-targets
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin
+        ARCHIVE DESTINATION lib
+        INCLUDES DESTINATION include
+    )
+
+    install(EXPORT zxing-targets DESTINATION lib/zxing/cmake NAMESPACE zxing::)
+
+    install(
+        DIRECTORY core/src/zxing/
+        DESTINATION include/zxing
+        FILES_MATCHING PATTERN "*.h"
+    )
+
+    configure_file(cmake/zxing-config.cmake.in zxing-config.cmake @ONLY)
+    install(FILES ${CMAKE_BINARY_DIR}/zxing-config.cmake DESTINATION lib/zxing/cmake)
+
+    if(BUILD_TESTING)
+        # Add testrunner executable.
+        find_package(CPPUNIT)
+        if(CPPUNIT_FOUND)
+            file(GLOB_RECURSE TESTRUNNER_FILES
+                "./core/tests/src/*.cpp"
+                "./core/tests/src/*.h"
+            )
+            add_executable(testrunner ${TESTRUNNER_FILES})
+            include_directories(${CPPUNIT_INCLUDE_DIR})
+            target_link_libraries(testrunner libzxing  ${CPPUNIT_LIBRARIES})
+        endif()
     endif()
 endif()
