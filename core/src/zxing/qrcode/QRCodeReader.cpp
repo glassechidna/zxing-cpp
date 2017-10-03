@@ -37,9 +37,18 @@ namespace zxing {
 			Ref<DetectorResult> detectorResult(detector.detect(hints));
 			ArrayRef< Ref<ResultPoint> > points (detectorResult->getPoints());
 			Ref<DecoderResult> decoderResult(decoder_.decode(detectorResult->getBits()));
-			Ref<Result> result(
-							   new Result(decoderResult->getText(), decoderResult->getRawBytes(), points, BarcodeFormat::QR_CODE));
+			Ref<Result> result(new Result(decoderResult->getText(), decoderResult->getRawBytes(), points, BarcodeFormat::QR_CODE));
 			return result;
+		}
+		
+		Ref<ResultQR> QRCodeReader::decodeQR(Ref<BinaryBitmap> image, DecodeHints hints) {
+			Detector detector(image->getBlackMatrix());
+			Ref<DetectorResult> detectorResult(detector.detect(hints));
+			ArrayRef< Ref<ResultPoint> > points (detectorResult->getPoints());
+			Ref<DecoderResult> decoderResult(decoder_.decode(detectorResult->getBits()));
+			Ref<Result> result(new Result(decoderResult->getText(), decoderResult->getRawBytes(), points, BarcodeFormat::QR_CODE));
+			Ref<ResultQR> res(new ResultQR(result, detectorResult->getBits()->getHeight()));
+			return res;
 		}
 		
 		QRCodeReader::~QRCodeReader() {

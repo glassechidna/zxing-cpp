@@ -212,6 +212,8 @@ set(LIBZXING_FILES
     core/src/zxing/Reader.cpp
     core/src/zxing/Reader.h
     core/src/zxing/ReaderException.h
+    core/src/zxing/ResultQR.cpp
+    core/src/zxing/ResultQR.h
     core/src/zxing/Result.cpp
     core/src/zxing/Result.h
     core/src/zxing/ResultIO.cpp

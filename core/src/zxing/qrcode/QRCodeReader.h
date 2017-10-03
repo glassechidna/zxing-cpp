@@ -24,6 +24,7 @@
 #include <zxing/Reader.h>
 #include <zxing/qrcode/decoder/Decoder.h>
 #include <zxing/DecodeHints.h>
+#include <zxing/ResultQR.h>
 
 namespace zxing {
 namespace qrcode {
@@ -40,6 +41,7 @@ class QRCodeReader : public Reader {
   virtual ~QRCodeReader();
 			
   Ref<Result> decode(Ref<BinaryBitmap> image, DecodeHints hints);
+  Ref<ResultQR> decodeQR(Ref<BinaryBitmap> image, DecodeHints hints);
 };
 
 }
