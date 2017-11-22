@@ -7,8 +7,8 @@ option(BUILD_TESTING "Enable generation of test targets" OFF)
 set(CMAKE_LIBRARY_PATH /opt/local/lib ${CMAKE_LIBRARY_PATH})
 
 # Check for polluted source tree.
-if(EXISTS ${CMAKE_SOURCE_DIR}/CMakeCache.txt OR
-    EXISTS ${CMAKE_SOURCE_DIR}/CMakeFiles)
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/CMakeCache.txt OR
+    EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/CMakeFiles)
     message(FATAL_ERROR
         "Source directory is polluted:"
         "\n  * remove CMakeCache.txt"
@@ -16,7 +16,7 @@ if(EXISTS ${CMAKE_SOURCE_DIR}/CMakeCache.txt OR
 endif()
 
 # Suppress in-source builds.
-if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+if(${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_BINARY_DIR})
     message(FATAL_ERROR
         "CMake generation is not allowed within the source directory:"
         "\n  * mkdir build"
@@ -26,7 +26,7 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 endif()
 
 # Adjust CMake's module path.
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/FindModules)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindModules)
 
 # Suppress MSVC CRT warnings.
 if(MSVC)
@@ -103,7 +103,7 @@ if(NOT ANDROID)
     )
 
     configure_file(cmake/zxing-config.cmake.in zxing-config.cmake @ONLY)
-    install(FILES ${CMAKE_BINARY_DIR}/zxing-config.cmake DESTINATION lib/zxing/cmake)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/zxing-config.cmake DESTINATION lib/zxing/cmake)
 
     if(BUILD_TESTING)
         # Add testrunner executable.
