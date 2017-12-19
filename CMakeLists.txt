@@ -65,6 +65,7 @@ set(targets libzxing)
 
 if(WITHOUT_ICONV)
     message(STATUS "Skip iconv detection")
+    add_definitions(-DNO_ICONV=1)
 else()
     find_package(Iconv)
     if(ICONV_FOUND)
