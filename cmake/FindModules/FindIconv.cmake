@@ -1,57 +1,76 @@
-# - Try to find Iconv 
-# Once done this will define 
-# 
-#  ICONV_FOUND - system has Iconv 
-#  ICONV_INCLUDE_DIR - the Iconv include directory 
-#  ICONV_LIBRARIES - Link these to use Iconv 
-#  ICONV_SECOND_ARGUMENT_IS_CONST - the second argument for iconv() is const
-# 
-include(CheckCXXSourceCompiles)
+function(_iconv_find)
+  if(ICONV_ROOT)
+    list(APPEND iconv_roots ${ICONV_ROOT})
+  else()
+    if(NOT "$ENV{ICONV_ROOT}" STREQUAL "")
+      file(TO_CMAKE_PATH "$ENV{ICONV_ROOT}" NATIVE_PATH)
+      list(APPEND iconv_roots "${NATIVE_PATH}")
+      set(ICONV_ROOT "${NATIVE_PATH}"
+        CACHE PATH "Location of the Iconv installation" FORCE)
+    endif()
+  endif()
 
-IF (ICONV_INCLUDE_DIR)
-  # Already in cache, be silent
-  SET(ICONV_FIND_QUIETLY TRUE)
-ENDIF (ICONV_INCLUDE_DIR)
+  list(APPEND iconv_library_suffixes "lib")
+  list(APPEND iconv_include_suffixes "include")
 
-FIND_PATH(ICONV_INCLUDE_DIR iconv.h) 
- 
-FIND_LIBRARY(ICONV_LIBRARIES NAMES iconv libiconv libiconv-2 c)
- 
-IF(ICONV_INCLUDE_DIR) 
-   SET(ICONV_FOUND TRUE) 
-ENDIF(ICONV_INCLUDE_DIR) 
+  find_path(ICONV_INCLUDE_DIR
+    NAMES "iconv.h"
+    HINTS ${iconv_roots}
+    PATH_SUFFIXES ${iconv_include_suffixes}
+    DOC "Iconv include directory")
+  set(ICONV_INCLUDE_DIR "${ICONV_INCLUDE_DIR}" PARENT_SCOPE)
 
-set(CMAKE_REQUIRED_INCLUDES ${ICONV_INCLUDE_DIR})
-set(CMAKE_REQUIRED_LIBRARIES ${ICONV_LIBRARIES})
-IF(ICONV_FOUND)
-  check_cxx_source_compiles("
-  #include <iconv.h>
-  int main(){
-    iconv_t conv = 0;
-    char* in = 0;
-    size_t ilen = 0;
-    char* out = 0;
-    size_t olen = 0;
-    iconv(conv, &in, &ilen, &out, &olen);
-    return 0;
-  }
-" ICONV_SECOND_ARGUMENT_IS_CONST )
-ENDIF(ICONV_FOUND)
-set(CMAKE_REQUIRED_INCLUDES)
-set(CMAKE_REQUIRED_LIBRARIES)
+  find_library(ICONV_LIBRARY
+    NAMES
+      iconv
+      libiconv
+      libiconv2
+    HINTS ${iconv_roots}
+    PATH_SUFFIXES ${iconv_library_suffixes}
+    DOC "Iconv library")
+  set(ICONV_LIBRARY "${ICONV_LIBRARY}" PARENT_SCOPE)
 
-IF(ICONV_FOUND) 
-  IF(NOT ICONV_FIND_QUIETLY) 
-    MESSAGE(STATUS "Found Iconv: ${ICONV_LIBRARIES}") 
-  ENDIF(NOT ICONV_FIND_QUIETLY) 
-ELSE(ICONV_FOUND) 
-  IF(Iconv_FIND_REQUIRED) 
-    MESSAGE(FATAL_ERROR "Could not find Iconv") 
-  ENDIF(Iconv_FIND_REQUIRED) 
-ENDIF(ICONV_FOUND)
+  if(ICONV_INCLUDE_DIR AND NOT ICONV_LIBRARY)
+    include(CheckFunctionExists)
+    check_function_exists(iconv HAVE_ICONV_IN_LIBC)
+    if(HAVE_ICONV_IN_LIBC)
+      set(HAVE_ICONV_IN_LIBC "${HAVE_ICONV_IN_LIBC}" PARENT_SCOPE)
+      set(ICONV_LIBRARY "integrated in standard library" PARENT_SCOPE)
+    endif()
+  endif()
 
-MARK_AS_ADVANCED(
-  ICONV_INCLUDE_DIR
-  ICONV_LIBRARIES
-  ICONV_SECOND_ARGUMENT_IS_CONST
-)
+  if(ICONV_INCLUDE_DIR AND ICONV_LIBRARY)
+    set(ICONV_FOUND ON PARENT_SCOPE)
+  endif()
+endfunction()
+
+_iconv_find()
+
+if(ICONV_FOUND)
+  if(NOT ICONV_FIND_QUIETLY)
+    message(STATUS "Found iconv library: ${ICONV_LIBRARY}")
+  endif()
+
+  if(HAVE_ICONV_IN_LIBC)
+    set(_lib_type INTERFACE)
+  else()
+    set(_lib_type UNKNOWN)
+  endif()
+
+  add_library(Iconv::Iconv ${_lib_type} IMPORTED)
+  set_target_properties(Iconv::Iconv PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${ICONV_INCLUDE_DIR}")
+
+  if(NOT HAVE_ICONV_IN_LIBC)
+    set_target_properties(Iconv::Iconv PROPERTIES
+      IMPORTED_LOCATION "${ICONV_LIBRARY}")
+  endif()
+
+  unset(_lib_type)
+else()
+  if(ICONV_FIND_REQUIRED)
+    message(FATAL_ERROR "Could NOT find iconv library")
+  endif()
+endif()
+
+mark_as_advanced(ICONV_LIBRARY ICONV_INCLUDE_DIR)
