@@ -43,7 +43,7 @@ if(WIN32)
 endif()
 
 # OpenCV classes
-find_package(OpenCV)
+find_package(OpenCV QUIET)
 if(OpenCV_FOUND)
     list(APPEND LIBZXING_FILES
         opencv/src/zxing/MatSource.cpp
@@ -58,7 +58,7 @@ include_directories(core/src)
 add_library(libzxing ${LIBZXING_FILES})
 set_target_properties(libzxing PROPERTIES PREFIX "")
 
-find_package(Iconv)
+find_package(Iconv QUIET)
 if(ICONV_FOUND)
     include_directories(${ICONV_INCLUDE_DIR})
     target_link_libraries(libzxing ${ICONV_LIBRARIES})
