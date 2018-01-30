@@ -39,7 +39,9 @@ include(source_files.cmake)
 
 if(WIN32)
     include_directories(core/lib/win32)
-    set(CMAKE_DEBUG_POSTFIX -debug)
+    if(CMAKE_BUILD_TYPE EQUAL Debug)
+        set(CMAKE_DEBUG_POSTFIX d)
+    endif()
 endif()
 
 # OpenCV classes
