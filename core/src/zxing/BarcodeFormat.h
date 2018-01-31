@@ -21,6 +21,8 @@
  * limitations under the License.
  */
 
+#include <zxing_export.h>
+
 namespace zxing {
 
 class BarcodeFormat {
@@ -48,11 +50,11 @@ public:
     UPC_EAN_EXTENSION
   };
 
-  BarcodeFormat(Value v) : value(v) {}  
+  BarcodeFormat(Value v) : value(v) {}
   const Value value;
   operator Value () const {return value;}
 
-  static char const* barcodeFormatNames[];
+  static LIBZXING_EXPORT char const* barcodeFormatNames[];
 };
 
 }
