@@ -100,6 +100,14 @@ install(
     FILES_MATCHING PATTERN "*.h"
 )
 
+if(OpenCV_FOUND)
+    install(
+        DIRECTORY opencv/src/zxing/
+        DESTINATION include/zxing
+        FILES_MATCHING PATTERN "*.h"
+    )
+endif()
+
 configure_file(cmake/zxing-config.cmake.in zxing-config.cmake @ONLY)
 install(FILES ${CMAKE_BINARY_DIR}/zxing-config.cmake DESTINATION lib/zxing/cmake)
 
