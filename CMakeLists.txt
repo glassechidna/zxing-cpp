@@ -39,11 +39,13 @@ include(source_files.cmake)
 
 if(WIN32)
     include_directories(core/lib/win32)
-    set(CMAKE_DEBUG_POSTFIX -debug)
+    if(CMAKE_BUILD_TYPE EQUAL Debug)
+        set(CMAKE_DEBUG_POSTFIX d)
+    endif()
 endif()
 
 # OpenCV classes
-find_package(OpenCV)
+find_package(OpenCV QUIET)
 if(OpenCV_FOUND)
     list(APPEND LIBZXING_FILES
         opencv/src/zxing/MatSource.cpp
@@ -55,10 +57,17 @@ if(OpenCV_FOUND)
 endif()
 
 include_directories(core/src)
-add_library(libzxing ${LIBZXING_FILES})
+add_library(libzxing SHARED ${LIBZXING_FILES})
 set_target_properties(libzxing PROPERTIES PREFIX "")
 
-find_package(Iconv)
+include(GenerateExportHeader)
+generate_export_header(libzxing EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/zxing_export.h)
+target_include_directories(libzxing PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
+    $<INSTALL_INTERFACE:include>
+)
+
+find_package(Iconv QUIET)
 if(ICONV_FOUND)
     include_directories(${ICONV_INCLUDE_DIR})
     target_link_libraries(libzxing ${ICONV_LIBRARIES})
@@ -85,13 +94,15 @@ file(GLOB_RECURSE ZXING_FILES
 add_executable(zxing ${ZXING_FILES})
 target_link_libraries(zxing libzxing)
 
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/zxing_export.h
+    DESTINATION include
+)
 install(TARGETS zxing libzxing EXPORT zxing-targets
-	LIBRARY DESTINATION lib
-	RUNTIME DESTINATION bin
-	ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+    ARCHIVE DESTINATION lib
     INCLUDES DESTINATION include
 )
-
 install(EXPORT zxing-targets DESTINATION lib/zxing/cmake NAMESPACE zxing::)
 
 install(
