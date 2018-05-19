@@ -80,3 +80,18 @@ zxing::ArrayRef<char> MatSource::getMatrix() const {
     return matrix;
 
 }
+
+bool MatSource::isCropSupported() const {
+    return true;
+}
+
+zxing::Ref<zxing::LuminanceSource> MatSource::crop(int left, int top, int width, int height) const {
+    cv::Rect roi;
+    roi.x = left;
+    roi.y = top;
+    roi.width = width;
+    roi.height = height;
+
+    cv::Mat crop = cvImage(roi);
+    return MatSource::create(crop);
+}

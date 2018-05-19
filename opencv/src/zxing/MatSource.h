@@ -33,6 +33,10 @@ public:
     zxing::ArrayRef<char> getRow(int y, zxing::ArrayRef<char> row) const;
     zxing::ArrayRef<char> getMatrix() const;
 
+    bool isCropSupported() const override;
+
+    zxing::Ref<LuminanceSource> crop(int left, int top, int width, int height) const override;
+
 };
 
 #endif /* __MAT_SOURCE_H_ */
