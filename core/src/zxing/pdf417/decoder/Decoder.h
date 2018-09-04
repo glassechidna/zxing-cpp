@@ -25,8 +25,9 @@
 #include <zxing/pdf417/decoder/ec/ModulusGF.h>
 #include <zxing/common/Counted.h>
 #include <zxing/common/Array.h>
-#include <zxing/common/DecoderResult.h>
 #include <zxing/common/BitMatrix.h>
+#include <zxing/common/DecoderResult.h>
+#include <zxing/DecodeHints.h>
 
 
 namespace zxing {
