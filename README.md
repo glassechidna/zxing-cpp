@@ -1,5 +1,43 @@
 # ZXing C++ Port
 
+
+# Scantrust usage
+
+## Build for ios
+You have to first set two environment variables
+
+1) `IOS_LIBS_OUTPUT` the destination of the compile library
+2) `IOS_TOOLCHAIN` the toolchain that cmake should use to compile the project for ios platform. The toolchain can be found here (https://github.com/leetal/ios-cmake).
+
+Then run the script
+```
+./build-ios.sh
+```
+
+It will build and install zxing library in `$IOS_LIBS_OUTPUT`. The library is build for every iOS
+platform (e.g. armv7, arm64, ...) and the binaries are then packed together inside the same static
+archive (libzxing.a).
+
+## Android
+
+For android, you should use this cmake project as a native dependency from your main project.
+
+> Note: You might want to check this (https://github.com/ScanTrust/android-libs/blob/feature/use-jni-sdk/android-sdk/build.gradle)
+
+**TODO** Explain the android build process!! 
+
+## Desktop
+
+To compile the library on your machine just run the following commands
+
+```
+# cd to project root
+mkdir build # if not existing
+cd build
+cmake ..
+cmake install
+```
+
 [![Build Status](https://travis-ci.org/glassechidna/zxing-cpp.svg?branch=master)](https://travis-ci.org/glassechidna/zxing-cpp)
 
 [ZXing](https://github.com/zxing/zxing) is/was a Java library.
