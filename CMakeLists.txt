@@ -57,7 +57,7 @@ endif()
 
 
 include_directories(core/src)
-add_library(libzxing ${LIBZXING_FILES})
+add_library(libzxing STATIC ${LIBZXING_FILES})
 set_target_properties(libzxing PROPERTIES OUTPUT_NAME zxing)
 
 set(targets libzxing)
