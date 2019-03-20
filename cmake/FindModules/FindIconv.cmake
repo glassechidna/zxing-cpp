@@ -20,7 +20,7 @@ function(_iconv_find)
     DOC "Iconv include directory")
   set(ICONV_INCLUDE_DIR "${ICONV_INCLUDE_DIR}" PARENT_SCOPE)
 
-  find_library(ICONV_LIBRARY
+  find_library(ICONV_LIBRARIES
     NAMES
       iconv
       libiconv
@@ -28,18 +28,18 @@ function(_iconv_find)
     HINTS ${iconv_roots}
     PATH_SUFFIXES ${iconv_library_suffixes}
     DOC "Iconv library")
-  set(ICONV_LIBRARY "${ICONV_LIBRARY}" PARENT_SCOPE)
+  set(ICONV_LIBRARIES "${ICONV_LIBRARIES}" PARENT_SCOPE)
 
-  if(ICONV_INCLUDE_DIR AND NOT ICONV_LIBRARY)
+  if(ICONV_INCLUDE_DIR AND NOT ICONV_LIBRARIES)
     include(CheckFunctionExists)
     check_function_exists(iconv HAVE_ICONV_IN_LIBC)
     if(HAVE_ICONV_IN_LIBC)
       set(HAVE_ICONV_IN_LIBC "${HAVE_ICONV_IN_LIBC}" PARENT_SCOPE)
-      set(ICONV_LIBRARY "integrated in standard library" PARENT_SCOPE)
+      set(ICONV_LIBRARIES "integrated in standard library" PARENT_SCOPE)
     endif()
   endif()
 
-  if(ICONV_INCLUDE_DIR AND ICONV_LIBRARY)
+  if(ICONV_INCLUDE_DIR AND ICONV_LIBRARIES)
     set(ICONV_FOUND ON PARENT_SCOPE)
   endif()
 endfunction()
@@ -63,7 +63,7 @@ if(ICONV_FOUND)
 
   if(NOT HAVE_ICONV_IN_LIBC)
     set_target_properties(Iconv::Iconv PROPERTIES
-      IMPORTED_LOCATION "${ICONV_LIBRARY}")
+      IMPORTED_LOCATION "${ICONV_LIBRARIES}")
   endif()
 
   unset(_lib_type)
@@ -73,4 +73,4 @@ else()
   endif()
 endif()
 
-mark_as_advanced(ICONV_LIBRARY ICONV_INCLUDE_DIR)
+mark_as_advanced(ICONV_LIBRARIES ICONV_INCLUDE_DIR)
