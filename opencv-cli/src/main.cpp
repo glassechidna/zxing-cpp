@@ -39,6 +39,18 @@ using namespace zxing;
 using namespace zxing::qrcode;
 using namespace cv;
 
+#if CV_MAJOR_VERSION >= 4
+#ifndef CV_CAP_PROP_FRAME_WIDTH
+#define CV_CAP_PROP_FRAME_WIDTH CAP_PROP_FRAME_WIDTH
+#endif
+#ifndef CV_CAP_PROP_FRAME_HEIGHT
+#define CV_CAP_PROP_FRAME_HEIGHT CAP_PROP_FRAME_HEIGHT
+#endif
+#ifndef CV_BGR2GRAY
+#define CV_BGR2GRAY COLOR_BGR2GRAY
+#endif
+#endif
+
 void printUsage(char** argv) {
 
     // Print usage
