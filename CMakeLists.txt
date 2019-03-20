@@ -40,6 +40,8 @@ include(source_files.cmake)
 if(WIN32)
     include_directories(core/lib/win32)
     set(CMAKE_DEBUG_POSTFIX -debug)
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
 
 # OpenCV classes
