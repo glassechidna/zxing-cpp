@@ -39,6 +39,18 @@ using namespace zxing;
 using namespace zxing::qrcode;
 using namespace cv;
 
+#if CV_MAJOR_VERSION >= 4
+#ifndef CV_CAP_PROP_FRAME_WIDTH
+#define CV_CAP_PROP_FRAME_WIDTH CAP_PROP_FRAME_WIDTH
+#endif
+#ifndef CV_CAP_PROP_FRAME_HEIGHT
+#define CV_CAP_PROP_FRAME_HEIGHT CAP_PROP_FRAME_HEIGHT
+#endif
+#ifndef CV_BGR2GRAY
+#define CV_BGR2GRAY COLOR_BGR2GRAY
+#endif
+#endif
+
 void printUsage(char** argv) {
 
     // Print usage
@@ -135,14 +147,14 @@ int main(int argc, char** argv) {
 
     }
 
-    if (!videoCapture.set(CAP_PROP_FRAME_WIDTH, captureWidth)) {
+    if (!videoCapture.set(CV_CAP_PROP_FRAME_WIDTH, captureWidth)) {
 
         // Log
         cerr << "Failed to set frame width: " << captureWidth << " (ignoring)" << endl;
 
     }
 
-    if (!videoCapture.set(CAP_PROP_FRAME_HEIGHT, captureHeight)) {
+    if (!videoCapture.set(CV_CAP_PROP_FRAME_HEIGHT, captureHeight)) {
 
         // Log
         cerr << "Failed to set frame height: " << captureHeight << " (ignoring)" << endl;
@@ -166,7 +178,7 @@ int main(int argc, char** argv) {
         if (result) {
 
             // Convert to grayscale
-            cvtColor(image, grey, COLOR_BGR2GRAY);
+            cvtColor(image, grey, CV_BGR2GRAY);
 
             try {
 
