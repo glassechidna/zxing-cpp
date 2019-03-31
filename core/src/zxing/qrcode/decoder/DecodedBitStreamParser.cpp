@@ -67,6 +67,12 @@ void DecodedBitStreamParser::append(std::string &result,
     return;
   }
 
+  if(src == NULL) {
+    // don't try to recode un-encoded data.
+    result.append((const char *)bufIn, nIn);
+    return;
+  }
+
   iconv_t cd = iconv_open(StringUtils::UTF8, src);
   if (cd == (iconv_t)-1) {
     result.append((const char *)bufIn, nIn);
@@ -193,19 +199,24 @@ void DecodedBitStreamParser::decodeByteSegment(Ref<BitSource> bits_,
   for (int i = 0; i < count; i++) {
     readBytes[i] = (char) bits.readBits(8);
   }
-  string encoding;
-  if (currentCharacterSetECI == 0) {
-    // The spec isn't clear on this mode; see
-    // section 6.4.5: t does not say which encoding to assuming
-    // upon decoding. I have seen ISO-8859-1 used as well as
-    // Shift_JIS -- without anything like an ECI designator to
-    // give a hint.
-    encoding = StringUtils::guessEncoding(readBytes, count, hints);
+  const char* encoding = NULL;
+  if (currentCharacterSetECI == NULL) {
+    // The spec says
+    // 8.3.1: The default interpretation for QR Code is ECI 000020 representing the JIS8 and Shift JIS character sets.
+    // 8.4.4: In [8-bit Byte Mode], one 8 bit codeword directly represents the JIS8 character [...].
+    //        In ECIs other than the default ECI, it represents an 8-bit byte value directly.
+    // If I'm reading that right, *if* the character set is unspecified *or* explicitly set to Shift-JIS,
+    // *then* use JIS8 but *otherwise* don't try to decode the value.
+    //
+    // That's a stupid spec.
+    // Instead we follow qrencode:
+    //   unspecified ECI <=> unmolested binary
+    encoding = NULL;
   } else {
     encoding = currentCharacterSetECI->name();
   }
   try {
-    append(result, readBytes, nBytes, encoding.c_str());
+    append(result, readBytes, nBytes, encoding);
   } catch (ReaderException const& ignored) {
     (void)ignored;
     throw FormatException();
