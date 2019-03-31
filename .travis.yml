@@ -1,2 +1,8 @@
 language: cpp
-script: mkdir build && cd build && cmake -G "Unix Makefiles" .. && make
+script:
+ - mkdir build
+ - cd build
+ - cmake -G "Unix Makefiles" ..
+ - make
+ - export PATH=$(pwd):$PATH
+ - ../tests/test.sh
