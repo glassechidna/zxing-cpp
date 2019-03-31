@@ -16,7 +16,7 @@
  */
 
 #include <zxing/multi/GenericMultipleBarcodeReader.h>
-#include <zxing/ReaderException.h>
+#include <zxing/NotFoundException.h>
 #include <zxing/ResultPoint.h>
 
 using std::vector;
@@ -39,7 +39,7 @@ vector<Ref<Result> > GenericMultipleBarcodeReader::decodeMultiple(Ref<BinaryBitm
   vector<Ref<Result> > results;
   doDecodeMultiple(image, hints, results, 0, 0, 0);
   if (results.empty()){
-    throw ReaderException("No code detected");
+    throw NotFoundException("No code detected");
   }
   return results;
 }

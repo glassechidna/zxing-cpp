@@ -17,6 +17,7 @@
 
 #include <zxing/multi/qrcode/QRCodeMultiReader.h>
 #include <zxing/ReaderException.h>
+#include <zxing/NotFoundException.h>
 #include <zxing/multi/qrcode/detector/MultiDetector.h>
 #include <zxing/BarcodeFormat.h>
 
@@ -49,7 +50,7 @@ std::vector<Ref<Result> > QRCodeMultiReader::decodeMultiple(Ref<BinaryBitmap> im
     }
   }
   if (results.empty()){
-    throw ReaderException("No code detected");
+    throw NotFoundException("No code detected");
   }
   return results;
 }

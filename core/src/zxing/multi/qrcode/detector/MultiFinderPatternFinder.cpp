@@ -19,7 +19,7 @@
 #include <algorithm>
 #include <zxing/multi/qrcode/detector/MultiFinderPatternFinder.h>
 #include <zxing/DecodeHints.h>
-#include <zxing/ReaderException.h>
+#include <zxing/NotFoundException.h>
 
 using std::abs;
 using std::min;
@@ -27,7 +27,7 @@ using std::sort;
 using std::vector;
 using zxing::Ref;
 using zxing::BitMatrix;
-using zxing::ReaderException;
+using zxing::NotFoundException;
 using zxing::qrcode::FinderPattern;
 using zxing::qrcode::FinderPatternInfo;
 using zxing::multi::MultiFinderPatternFinder;
@@ -142,7 +142,7 @@ vector<vector<Ref<FinderPattern> > > MultiFinderPatternFinder::selectBestPattern
 
   if (size < 3) {
     // Couldn't find enough finder patterns
-    throw ReaderException("No code detected");
+    throw NotFoundException("No code detected");
   }
   
   vector<vector<Ref<FinderPattern> > > results;
@@ -230,7 +230,7 @@ vector<vector<Ref<FinderPattern> > > MultiFinderPatternFinder::selectBestPattern
   } // end iterate p1
   if (results.empty()){
     // Nothing found!
-    throw ReaderException("No code detected");    
+    throw NotFoundException("No code detected");
   }
   return results;
 }
