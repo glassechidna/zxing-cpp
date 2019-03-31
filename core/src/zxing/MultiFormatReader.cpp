@@ -24,6 +24,7 @@
 #include <zxing/oned/MultiFormatUPCEANReader.h>
 #include <zxing/oned/MultiFormatOneDReader.h>
 #include <zxing/ReaderException.h>
+#include <zxing/NotFoundException.h>
 
 using zxing::Ref;
 using zxing::Result;
@@ -118,7 +119,7 @@ Ref<Result> MultiFormatReader::decodeInternal(Ref<BinaryBitmap> image) {
       // continue
     }
   }
-  throw ReaderException("No code detected");
+  throw NotFoundException("No code detected");
 }
   
 MultiFormatReader::~MultiFormatReader() {}
