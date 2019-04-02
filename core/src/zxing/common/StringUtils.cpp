@@ -25,7 +25,9 @@ using namespace zxing::common;
 
 // N.B.: these are the iconv strings for at least some versions of iconv
 
-char const* const StringUtils::PLATFORM_DEFAULT_ENCODING = "UTF-8";
+char const* const StringUtils::PLATFORM_DEFAULT_ENCODING = "ISO8859-1";
+  // This default is an 8-bit fixed-width encoding and it's identical with
+  // unicode in its range, which reduces accidental mangling during decode.
 char const* const StringUtils::ASCII = "ASCII";
 char const* const StringUtils::SHIFT_JIS = "SHIFT_JIS";
 char const* const StringUtils::GB2312 = "GBK";
@@ -75,6 +77,11 @@ StringUtils::guessEncoding(char* bytes, int length,
        i++) {
 
     int value = bytes[i] & 0xFF;
+
+    // embedded nuls are a sure sign of binary data
+    if(value == '\x00') {
+      canBeISO88591 = canBeShiftJIS = canBeUTF8 = false;
+    }
 
     // UTF-8 stuff
     if (canBeUTF8) {
