@@ -60,10 +60,12 @@ include_directories(core/src)
 add_library(libzxing ${LIBZXING_FILES})
 set_target_properties(libzxing PROPERTIES PREFIX "")
 
+set(libzxing_LIBS "")
+
 find_package(Iconv)
 if(ICONV_FOUND)
     include_directories(${ICONV_INCLUDE_DIR})
-    target_link_libraries(libzxing ${ICONV_LIBRARIES})
+    set(libzxing_LIBS ${libzxing_LIBS} ${ICONV_LIBRARIES})
 else()
     add_definitions(-DNO_ICONV=1)
 endif()
@@ -75,8 +77,11 @@ if(OpenCV_FOUND)
         "./opencv-cli/src/*.h"
     )
     add_executable(zxing-cv ${OPENCV_ZXING_FILES})
+    set(libzxing_LIBS ${libzxing_LIBS} ${OpenCV_LIBRARIES})
     target_link_libraries(zxing-cv libzxing ${OpenCV_LIBRARIES})
 endif()
+
+target_link_libraries(libzxing PRIVATE ${libzxing_LIBS})
 
 # Add cli executable.
 file(GLOB_RECURSE ZXING_FILES
