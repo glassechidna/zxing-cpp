@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 project(zxing)
 
 option(BUILD_TESTING "Enable generation of test targets" OFF)
+option(BUILD_OPENCV "Enable OpenCV classes and OpenCV cli executable" ON)
 
 set(CMAKE_LIBRARY_PATH /opt/local/lib ${CMAKE_LIBRARY_PATH})
 
@@ -44,8 +45,10 @@ else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
 
-# OpenCV classes
-find_package(OpenCV)
+if (BUILD_OPENCV)
+    # OpenCV classes
+    find_package(OpenCV)
+endif()
 if(OpenCV_FOUND)
     list(APPEND LIBZXING_FILES
         opencv/src/zxing/MatSource.cpp
